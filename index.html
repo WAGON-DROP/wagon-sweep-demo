@@ -587,11 +587,15 @@
                     wordmarkLarge.classList.add('show');
                 }
                 
-                // Start BOTH fading at 20 seconds - TOGETHER IN TANDEM
-                if (elapsedSeconds >= 20 && !wheelFading) {
-                    wheelFading = true;
-                    wheelContainer.classList.add('fade-out');
+                // Start wordmark fading at 15 seconds
+                if (elapsedSeconds >= 15 && !wordmarkLarge.classList.contains('fade-out')) {
                     wordmarkLarge.classList.add('fade-out');
+                }
+
+                // Start wheel fading at 20 seconds
+                if (elapsedSeconds >= 20 && !wheelFading) {
+                wheelFading = true;
+               wheelContainer.classList.add('fade-out');
                 }
                 
                 animationId = requestAnimationFrame(animate);
