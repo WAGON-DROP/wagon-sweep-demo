@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WAGON - Integrity Sweep</title>
+    
+    <!-- Young Serif Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Young+Serif&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            width: 100vw;
+            min-height: 100vh;
+            background-color: #FAF8F3;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        /* Subtle texture overlay */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            background-image: 
+                repeating-linear-gradient(
+                    45deg,
+                    transparent,
+                    transparent 35px,
+                    rgba(210, 105, 30, 0.05) 35px,
+                    rgba(210, 105, 30, 0.05) 70px
+                );
+            pointer-events: none;
+        }
+        
+        /* Main container */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 40px;
+            padding: 40px 20px;
+            position: relative;
+            width: 100%;
+            height: 100vh;
+        }
+        
+        /* Wheel container - positioned higher like original */
+        .wheel-container {
+            position: absolute;
+            top: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 43.875vh;
+            height: 43.875vh;
+            max-width: 438.75px;
+            max-height: 438.75px;
+            opacity: 0;
+            animation: fadeInWheel 2s ease-out 0.3s forwards;
+        }
+        
+        .wheel-container.fade-out {
+            opacity: 0 !important;
+            transition: opacity 5s ease-out !important;
+        }
+        
+        /* Small wordmark in bottom right */
+        .wordmark-small {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 100px;
+            height: auto;
+            opacity: 0;
+            animation: fadeInWordmark 2s ease-out 0.6s forwards;
+            transition: opacity 2s ease-out;
+        }
+        
+        .wordmark-small.fade-out {
+            opacity: 0 !important;
+        }
+        
+        /* Large wordmark that appears at the end */
+        .wordmark-large {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1500px;
+            max-width: 90vw;
+            height: auto;
+            opacity: 0;
+            transition: opacity 3s ease-out;
+            pointer-events: none;
+        }
+        
+        .wordmark-large.show {
+            opacity: 1;
+        }
+        
+        .wordmark-large.fade-out {
+            opacity: 0 !important;
+            transition: opacity 5s ease-out !important;
+        }
+        
+        /* Question text - THE STAR */
+        .question {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            font-family: 'Young Serif', serif;
+            font-size: 56px;
+            font-weight: 700;
+            font-style: italic;
+            color: #000000;
+            opacity: 0;
+            animation: fadeInQuestion 2s ease-out 1.5s forwards;
+            transition: opacity 2s ease-out;
+            white-space: nowrap;
+            text-shadow: 
+                3px 3px 0px #A0522D,
+                4px 4px 0px rgba(160, 82, 45, 0.5),
+                5px 5px 8px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(210, 105, 30, 0.2);
+            letter-spacing: 2px;
+        }
+        
+        .question.fade-out {
+            opacity: 0 !important;
+        }
+        
+        /* Button container */
+        .button-container {
+            position: absolute;
+            top: 77%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            opacity: 0;
+            animation: fadeInButtons 2s ease-out 2s forwards;
+            transition: opacity 2s ease-out;
+        }
+        
+        .button-container.fade-out {
+            opacity: 0 !important;
+        }
+        
+        /* Buttons - compact and punchy */
+        .action-button {
+            padding: 6px 15px;
+            background-color: #FAF8F3;
+            color: #A0522D;
+            text-decoration: none;
+            font-family: 'Young Serif', serif;
+            font-size: 13.5px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            border: 3px solid #A0522D;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+            text-align: center;
+            box-shadow: 2px 2px 0px rgba(160, 82, 45, 0.3);
+        }
+        
+        .action-button:hover {
+            background-color: #A0522D;
+            color: #FAF8F3;
+            transform: translateY(-2px);
+            box-shadow: 
+                3px 3px 0px rgba(160, 82, 45, 0.5),
+                0 4px 20px rgba(210, 105, 30, 0.3);
+        }
+        
+        /* Animations */
+        @keyframes fadeInWheel {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        @keyframes fadeInWordmark {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes fadeInQuestion {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) rotate(-2deg) translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) rotate(-2deg) translateY(0);
+            }
+        }
+        
+        @keyframes fadeInButtons {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        /* Wheel spin - starts slow */
+        .wagon-wheel {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 2px 10px rgba(210, 105, 30, 0.15));
+            animation: wheelSpinSlow 12s linear infinite;
+        }
+        
+        .wagon-wheel.accelerating {
+            animation: none;
+        }
+        
+        /* Slow initial spin */
+        @keyframes wheelSpinSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(-360deg); }
+        }
+        
+        /* Dust particles */
+        .dust {
+            position: absolute;
+            border-radius: 50%;
+            transition: opacity 2s ease-out;
+        }
+        
+        .dust.fade-out {
+            opacity: 0 !important;
+        }
+        
+        /* Fast dust - during escapes */
+        .fast-dust {
+            width: 4px;
+            height: 4px;
+            background: rgba(139, 90, 43, 0.6);
+            animation: fastDrift 3s linear infinite;
+        }
+        
+        /* Lazy dust - peaceful times */
+        .lazy-dust {
+            width: 2px;
+            height: 2px;
+            background: rgba(210, 180, 140, 0.2);
+            animation: lazyDrift 8s linear infinite;
+        }
+        
+        /* Struggle dust - uphill battle */
+        .struggle-dust {
+            width: 3px;
+            height: 3px;
+            background: rgba(105, 60, 30, 0.5);
+            animation: struggleDrift 5s ease-in-out infinite;
+        }
+        
+        .dust1 { top: 70%; left: 5%; }
+        .dust2 { top: 68%; left: 8%; animation-delay: -1s; }
+        .dust3 { top: 72%; left: 3%; animation-delay: -2s; }
+        .dust4 { top: 69%; left: 10%; animation-delay: -3s; }
+        .dust5 { top: 71%; left: 15%; animation-delay: -1.5s; }
+        .dust6 { top: 67%; left: 12%; animation-delay: -2.5s; }
+        .dust7 { top: 73%; left: 7%; animation-delay: -0.5s; }
+        .dust8 { top: 66%; left: 18%; animation-delay: -3.5s; }
+        .dust9 { top: 74%; left: 20%; animation-delay: -4s; }
+        .dust10 { top: 65%; left: 25%; animation-delay: -5s; }
+        .dust11 { top: 72%; left: 22%; animation-delay: -6s; }
+        .dust12 { top: 67%; left: 30%; animation-delay: -7s; }
+        
+        @keyframes fastDrift {
+            from {
+                transform: translateX(0) translateY(0);
+                opacity: 0;
+            }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
+            to {
+                transform: translateX(98vw) translateY(-10px);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes lazyDrift {
+            from {
+                transform: translateX(0) translateY(0);
+                opacity: 0;
+            }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            to {
+                transform: translateX(80vw) translateY(-15px);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes struggleDrift {
+            from {
+                transform: translateX(0) translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            20% { opacity: 0.6; }
+            50% { transform: translateX(20vw) translateY(-30px) rotate(180deg); }
+            80% { opacity: 0.6; }
+            to {
+                transform: translateX(40vw) translateY(0) rotate(360deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Wagon Wheel -->
+        <div class="wheel-container" id="wheelContainer">
+            <svg class="wagon-wheel" id="wagonWheel" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- Define gradients and shadows for depth -->
+                <defs>
+                    <!-- Rim gradient for 3D effect -->
+                    <radialGradient id="rimGradient" cx="45%" cy="45%">
+                        <stop offset="0%" style="stop-color:#B8733D;stop-opacity:1" />
+                        <stop offset="70%" style="stop-color:#A0522D;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#8B4513;stop-opacity:1" />
+                    </radialGradient>
+                    
+                    <!-- Spoke gradient for depth -->
+                    <linearGradient id="spokeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#B8733D;stop-opacity:1" />
+                        <stop offset="50%" style="stop-color:#A0522D;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#8B4513;stop-opacity:1" />
+                    </linearGradient>
+                    
+                    <!-- Hub gradient for dimension -->
+                    <radialGradient id="hubGradient" cx="40%" cy="40%">
+                        <stop offset="0%" style="stop-color:#B8733D;stop-opacity:1" />
+                        <stop offset="60%" style="stop-color:#A0522D;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#704214;stop-opacity:1" />
+                    </radialGradient>
+                    
+                    <!-- Inner shadow for rim -->
+                    <filter id="innerShadow">
+                        <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+                        <feOffset dx="2" dy="2" result="offsetblur"/>
+                        <feFlood flood-color="#000000" flood-opacity="0.2"/>
+                        <feComposite in2="offsetblur" operator="in"/>
+                        <feMerge>
+                            <feMergeNode/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                
+                <!-- Outer rim with gradient -->
+                <circle cx="100" cy="100" r="95" fill="none" stroke="url(#rimGradient)" stroke-width="6" filter="url(#innerShadow)"/>
+                <circle cx="100" cy="100" r="88" fill="none" stroke="#8B4513" stroke-width="2" opacity="0.6"/>
+                <circle cx="100" cy="100" r="92" fill="none" stroke="#B8733D" stroke-width="1" opacity="0.4"/>
+                
+                <!-- Inner hub with dimension -->
+                <circle cx="100" cy="100" r="20" fill="url(#hubGradient)"/>
+                <circle cx="100" cy="100" r="15" fill="#FAF8F3"/>
+                <circle cx="100" cy="100" r="15" fill="#A0522D" opacity="0.1"/>
+                <circle cx="100" cy="100" r="10" fill="url(#hubGradient)"/>
+                <circle cx="98" cy="98" r="8" fill="#B8733D" opacity="0.3"/>
+                
+                <!-- Main spokes with gradient and shadows -->
+                <g filter="url(#innerShadow)">
+                    <rect x="98" y="20" width="4" height="160" fill="url(#spokeGradient)" rx="1"/>
+                    <rect x="20" y="98" width="160" height="4" fill="url(#spokeGradient)" rx="1"/>
+                    <rect x="98" y="20" width="4" height="160" fill="url(#spokeGradient)" rx="1" transform="rotate(45 100 100)"/>
+                    <rect x="98" y="20" width="4" height="160" fill="url(#spokeGradient)" rx="1" transform="rotate(-45 100 100)"/>
+                </g>
+                
+                <!-- Highlight on main spokes -->
+                <rect x="98.5" y="20" width="1" height="160" fill="#B8733D" opacity="0.3"/>
+                <rect x="20" y="98.5" width="160" height="1" fill="#B8733D" opacity="0.3"/>
+                <rect x="98.5" y="20" width="1" height="160" fill="#B8733D" opacity="0.3" transform="rotate(45 100 100)"/>
+                <rect x="98.5" y="20" width="1" height="160" fill="#B8733D" opacity="0.3" transform="rotate(-45 100 100)"/>
+                
+                <!-- Secondary spokes with subtle depth -->
+                <rect x="99.5" y="40" width="1" height="120" fill="#8B4513" transform="rotate(22.5 100 100)"/>
+                <rect x="99.5" y="40" width="1" height="120" fill="#8B4513" transform="rotate(67.5 100 100)"/>
+                <rect x="99.5" y="40" width="1" height="120" fill="#8B4513" transform="rotate(112.5 100 100)"/>
+                <rect x="99.5" y="40" width="1" height="120" fill="#8B4513" transform="rotate(157.5 100 100)"/>
+                
+                <!-- Metal reinforcements with dimension -->
+                <circle cx="100" cy="35" r="4" fill="url(#hubGradient)"/>
+                <circle cx="100" cy="165" r="4" fill="url(#hubGradient)"/>
+                <circle cx="35" cy="100" r="4" fill="url(#hubGradient)"/>
+                <circle cx="165" cy="100" r="4" fill="url(#hubGradient)"/>
+                
+                <!-- Highlight dots on reinforcements -->
+                <circle cx="99" cy="34" r="1.5" fill="#B8733D" opacity="0.4"/>
+                <circle cx="99" cy="164" r="1.5" fill="#B8733D" opacity="0.4"/>
+                <circle cx="34" cy="99" r="1.5" fill="#B8733D" opacity="0.4"/>
+                <circle cx="164" cy="99" r="1.5" fill="#B8733D" opacity="0.4"/>
+                
+                <!-- Geometric tech details with depth -->
+                <circle cx="100" cy="20" r="2" fill="url(#hubGradient)"/>
+                <circle cx="180" cy="100" r="2" fill="url(#hubGradient)"/>
+                <circle cx="100" cy="180" r="2" fill="url(#hubGradient)"/>
+                <circle cx="20" cy="100" r="2" fill="url(#hubGradient)"/>
+            </svg>
+        </div>
+        
+        <!-- Small Wordmark (bottom right) -->
+        <img src="Wagon_TempWordmark_Charcoal.png" alt="WAGON" class="wordmark-small" id="wordmarkSmall">
+        
+        <!-- Large Wordmark (appears at end) -->
+        <img src="Wagon_TempWordmark_Charcoal.png" alt="WAGON" class="wordmark-large" id="wordmarkLarge">
+        
+        <!-- Question -->
+        <div class="question" id="question">Conduct Integrity Sweep?</div>
+        
+        <!-- Buttons -->
+        <div class="button-container" id="buttonContainer">
+            <button class="action-button" id="confirmButton">Confirm sweep?</button>
+            <button class="action-button" id="cancelButton">Cancel</button>
+        </div>
+    </div>
+    
+    <!-- Dust particles -->
+    <div class="dust dust1 fast-dust"></div>
+    <div class="dust dust2 lazy-dust"></div>
+    <div class="dust dust3 struggle-dust"></div>
+    <div class="dust dust4 lazy-dust"></div>
+    <div class="dust dust5 fast-dust"></div>
+    <div class="dust dust6 struggle-dust"></div>
+    <div class="dust dust7 lazy-dust"></div>
+    <div class="dust dust8 fast-dust"></div>
+    <div class="dust dust9 lazy-dust"></div>
+    <div class="dust dust10 struggle-dust"></div>
+    <div class="dust dust11 fast-dust"></div>
+    <div class="dust dust12 lazy-dust"></div>
+    
+    <script>
+        const confirmButton = document.getElementById('confirmButton');
+        const cancelButton = document.getElementById('cancelButton');
+        const wheelContainer = document.getElementById('wheelContainer');
+        const wagonWheel = document.getElementById('wagonWheel');
+        const question = document.getElementById('question');
+        const buttonContainer = document.getElementById('buttonContainer');
+        const wordmarkSmall = document.getElementById('wordmarkSmall');
+        const wordmarkLarge = document.getElementById('wordmarkLarge');
+        const dustParticles = document.querySelectorAll('.dust');
+        
+        let currentRotation = 0;
+        let currentSpeed = 20; // Start at 20% speed
+        let targetSpeed = 20;
+        let animationId;
+        let wobbleAmount = 0;
+        let journeyStartTime = null;
+        let wheelFading = false;
+        
+        // Cancel button does nothing for now
+        cancelButton.addEventListener('click', () => {
+            // Placeholder for future functionality
+        });
+        
+        // Confirm button starts the journey
+        confirmButton.addEventListener('click', () => {
+            // Start fade out sequence IMMEDIATELY
+            question.classList.add('fade-out');
+            buttonContainer.classList.add('fade-out');
+            wordmarkSmall.classList.add('fade-out');
+            dustParticles.forEach(dust => dust.classList.add('fade-out'));
+            
+            // Jump speed from 20% to 25% instantly
+            currentSpeed = 25;
+            
+            // Start the wagon journey immediately
+            startWagonJourney();
+        });
+        
+        function startWagonJourney() {
+            // Stop CSS animation and start manual control
+            wagonWheel.classList.add('accelerating');
+            journeyStartTime = Date.now();
+            
+            // Start animation immediately (wheel speeds up in place)
+            animateJourney();
+        }
+        
+        function getSpeedAtTime(elapsedSeconds) {
+            // ETERNAL ACCELERATION
+            if (elapsedSeconds <= 1) {
+                // 0-1s: Jump from 20% to 25% instantly, then start accelerating
+                return 25 + (18 * elapsedSeconds);
+            } else if (elapsedSeconds <= 3) {
+                // 1-3s: Continue accelerating at 18% per second while descending
+                return 25 + (18 * elapsedSeconds);
+            } else if (elapsedSeconds <= 5.28) {
+                // 3-5.28s: Continue until we hit 100%
+                const speed = 25 + (18 * elapsedSeconds);
+                if (speed >= 100) {
+                    // After hitting 100%, continue eternal acceleration
+                    return 100 + (18 * (elapsedSeconds - 4.17)); // 4.17s is when we hit 100%
+                }
+                return speed;
+            } else {
+                // Beyond 100% - ETERNAL ACCELERATION
+                return 100 + (18 * (elapsedSeconds - 4.17));
+            }
+        }
+        
+        function getWobbleAtSpeed(speed, elapsedSeconds) {
+            // No wobble until we hit 100% speed
+            if (speed < 100) return 0;
+            
+            // Wobble starts at 100% and slightly increases with speed
+            const baseWobble = 1.5;
+            const speedFactor = (speed - 100) / 100; // How much over 100% we are
+            return baseWobble + (speedFactor * 0.5); // Slightly increase with speed
+        }
+        
+        function animateJourney() {
+            function animate() {
+                const now = Date.now();
+                const elapsedSeconds = (now - journeyStartTime) / 1000;
+                
+                // Get current speed based on journey time
+                currentSpeed = getSpeedAtTime(elapsedSeconds);
+                
+                // Handle the descent (1-3 seconds)
+                if (elapsedSeconds >= 1 && elapsedSeconds <= 3) {
+                    if (!wheelContainer.style.transition || wheelContainer.style.transition === 'none') {
+                        // Start the slow descent and growth to dead center
+                        wheelContainer.style.transition = 'all 2s ease-in-out';
+                        wheelContainer.style.top = '50%'; // Dead center
+                        wheelContainer.style.transform = 'translate(-50%, -50%) scale(1.2)'; // Grow 20%
+                    }
+                }
+                
+                // Calculate wobble based on speed and time
+                wobbleAmount = getWobbleAtSpeed(currentSpeed, elapsedSeconds);
+                const wobble = Math.sin(now * 0.003) * wobbleAmount;
+                
+                // Rotate wheel
+                currentRotation -= (currentSpeed / 100) * 6;
+                
+                // Apply rotation with wobble
+                if (elapsedSeconds >= 1 && elapsedSeconds <= 3) {
+                    // During descent, maintain scale
+                    wagonWheel.style.transform = `rotate(${currentRotation}deg) translateX(${wobble}px)`;
+                } else {
+                    // Normal rotation
+                    wagonWheel.style.transform = `rotate(${currentRotation}deg) translateX(${wobble}px)`;
+                }
+                
+                // Show wordmark after 10 seconds total
+                if (elapsedSeconds >= 10 && !wordmarkLarge.classList.contains('show')) {
+                    wordmarkLarge.classList.add('show');
+                }
+                
+                // Start BOTH fading at 20 seconds - TOGETHER IN TANDEM
+                if (elapsedSeconds >= 20 && !wheelFading) {
+                    wheelFading = true;
+                    wheelContainer.classList.add('fade-out');
+                    wordmarkLarge.classList.add('fade-out');
+                }
+                
+                animationId = requestAnimationFrame(animate);
+            }
+            
+            animate();
+        }
+        function startProgress() {
+            // Realistic progress jumps
+            const progressSteps = [
+                { percent: 0, delay: 0 },
+                { percent: 5, delay: 300 },
+                { percent: 6, delay: 200 },
+                { percent: 12, delay: 400 },
+                { percent: 23, delay: 600 },
+                { percent: 31, delay: 300 },
+                { percent: 47, delay: 800 },
+                { percent: 67, delay: 700 },
+                { percent: 84, delay: 900 },
+                { percent: 91, delay: 400 },
+                { percent: 97, delay: 600 },
+                { percent: 100, delay: 300 }
+            ];
+            
+            let currentStep = 0;
+            
+            function updateProgress() {
+                if (currentStep < progressSteps.length) {
+                    const step = progressSteps[currentStep];
+                    progressFill.style.width = step.percent + '%';
+                    progressPercentage.textContent = step.percent + '%';
+                    
+                    if (step.percent === 100) {
+                        // Hide progress bar and show completion message
+                        setTimeout(() => {
+                            progressContainer.style.opacity = '0';
+                            setTimeout(() => {
+                                sweepComplete.classList.add('show');
+                            }, 500);
+                        }, 500);
+                    }
+                    
+                    currentStep++;
+                    if (currentStep < progressSteps.length) {
+                        setTimeout(updateProgress, progressSteps[currentStep].delay);
+                    }
+                }
+            }
+            
+            updateProgress();
+        }
+    </script>
+</body>
+</html>
