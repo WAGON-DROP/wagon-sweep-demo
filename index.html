@@ -582,9 +582,9 @@
                     wagonWheel.style.transform = `rotate(${currentRotation}deg) translateX(${wobble}px)`;
                 }
                 
-                // Show wordmark after 10 seconds total
-                if (elapsedSeconds >= 10 && !wordmarkLarge.classList.contains('show')) {
-                    wordmarkLarge.classList.add('show');
+              // Show wordmark after 8 seconds total
+                if (elapsedSeconds >= 8 && !wordmarkLarge.classList.contains('show')) {
+                wordmarkLarge.classList.add('show');
                 }
                 
                 // Start wordmark fading at 15 seconds
