@@ -108,7 +108,7 @@
             max-width: 90vw;
             height: auto;
             opacity: 0;
-            transition: opacity 2s ease-out;
+            transition: opacity 5s ease-out;
             pointer-events: none;
         }
         
@@ -118,7 +118,7 @@
         
         .wordmark-large.fade-out {
             opacity: 0 !important;
-            transition: opacity 3s ease-out !important;
+            transition: opacity 2s ease-out !important;
         }
         
         /* Question text - THE STAR */
@@ -637,8 +637,8 @@
                     wordmarkLarge.classList.add('show');
                 }
                 
-                // STOP ALL ANIMATIONS at 20 seconds
-                if (elapsedSeconds >= 20 && animationId) {
+                // STOP ALL ANIMATIONS at 25 seconds
+                if (elapsedSeconds >= 25 && animationId) {
                     cancelAnimationFrame(animationId);
                     animationId = null;
                     return; // Exit the animation loop
