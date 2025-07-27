@@ -617,33 +617,33 @@
                     wagonWheel.style.transform = `rotate(${currentRotation}deg) translateX(${wobble}px)`;
                 }
                 
-                // Show wordmark after 3.5 seconds
-                if (elapsedSeconds >= 3.5 && !wordmarkLarge.classList.contains('show')) {
+                // Show wordmark after 5 seconds
+                if (elapsedSeconds >= 5 && !wordmarkLarge.classList.contains('show')) {
                     wordmarkLarge.classList.add('show');
                 }
                 
-                // Start wordmark fading at 7 seconds
-                if (elapsedSeconds >= 7 && !wordmarkLarge.classList.contains('fade-out')) {
+                // Start wordmark fading at 9 seconds
+                if (elapsedSeconds >= 9 && !wordmarkLarge.classList.contains('fade-out')) {
                     wordmarkLarge.classList.add('fade-out');
                 }
 
-                // Show progress text at 9 seconds (while wheel is still spinning)
-                if (elapsedSeconds >= 9 && !progressText.classList.contains('show')) {
+                // Show progress text at 13 seconds (while wheel is still spinning)
+                if (elapsedSeconds >= 13 && !progressText.classList.contains('show')) {
                     progressText.classList.add('show');
                 }
                 
-                // Fade progress text at 12 seconds
-                if (elapsedSeconds >= 12 && !progressText.classList.contains('fade-out')) {
+                // Fade progress text at 16 seconds
+                if (elapsedSeconds >= 16 && !progressText.classList.contains('fade-out')) {
                     progressText.classList.add('fade-out');
                 }
                 
-                // Fade wheel at 15 seconds
-                if (elapsedSeconds >= 15 && !wheelContainer.classList.contains('fade-out')) {
+                // Fade wheel at 17 seconds
+                if (elapsedSeconds >= 17 && !wheelContainer.classList.contains('fade-out')) {
                     wheelContainer.classList.add('fade-out');
                 }
                 
-                // STOP ALL ANIMATIONS at 18 seconds
-                if (elapsedSeconds >= 18 && animationId) {
+                // STOP ALL ANIMATIONS at 20 seconds
+                if (elapsedSeconds >= 20 && animationId) {
                     cancelAnimationFrame(animationId);
                     animationId = null;
                     return; // Exit the animation loop
