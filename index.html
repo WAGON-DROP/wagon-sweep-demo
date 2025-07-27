@@ -79,7 +79,7 @@
         
         .wheel-container.fade-out {
             opacity: 0 !important;
-            transition: opacity 5s ease-out !important;
+            transition: opacity 3s ease-out !important;
         }
         
        /* Small wordmark in top right */
@@ -104,11 +104,11 @@
             top: 15%;
             left: 50%;
             transform: translateX(-50%);
-            width: 1500px;
+            width: 750px;
             max-width: 90vw;
             height: auto;
             opacity: 0;
-            transition: opacity 3s ease-out;
+            transition: opacity 2s ease-out;
             pointer-events: none;
         }
         
@@ -118,7 +118,7 @@
         
         .wordmark-large.fade-out {
             opacity: 0 !important;
-            transition: opacity 5s ease-out !important;
+            transition: opacity 3s ease-out !important;
         }
         
         /* Question text - THE STAR */
@@ -146,6 +146,37 @@
         
         .question.fade-out {
             opacity: 0 !important;
+        }
+        
+        /* Progress text - same styling as question */
+        .progress-text {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%) rotate(-2deg);
+            font-family: 'Young Serif', serif;
+            font-size: 56px;
+            font-weight: 700;
+            font-style: italic;
+            color: #000000;
+            opacity: 0;
+            white-space: nowrap;
+            text-shadow: 
+                3px 3px 0px #A0522D,
+                4px 4px 0px rgba(160, 82, 45, 0.5),
+                5px 5px 8px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(210, 105, 30, 0.2);
+            letter-spacing: 2px;
+            transition: opacity 2s ease-out;
+        }
+        
+        .progress-text.show {
+            opacity: 1;
+        }
+        
+        .progress-text.fade-out {
+            opacity: 0 !important;
+            transition: opacity 2s ease-out !important;
         }
         
         /* Button container */
@@ -447,6 +478,9 @@
         <!-- Question -->
         <div class="question" id="question">Conduct Integrity Sweep?</div>
         
+        <!-- Progress Text -->
+        <div class="progress-text" id="progressText">Sweep in progress...</div>
+        
         <!-- Buttons -->
         <div class="button-container" id="buttonContainer">
             <button class="action-button" id="confirmButton">Confirm sweep?</button>
@@ -477,6 +511,7 @@
         const buttonContainer = document.getElementById('buttonContainer');
         const wordmarkSmall = document.getElementById('wordmarkSmall');
         const wordmarkLarge = document.getElementById('wordmarkLarge');
+        const progressText = document.getElementById('progressText');
         const dustParticles = document.querySelectorAll('.dust');
         
         let currentRotation = 0;
@@ -517,24 +552,24 @@
         }
         
         function getSpeedAtTime(elapsedSeconds) {
-            // ETERNAL ACCELERATION
+            // ETERNAL ACCELERATION - 22% per second
             if (elapsedSeconds <= 1) {
                 // 0-1s: Jump from 20% to 25% instantly, then start accelerating
-                return 25 + (18 * elapsedSeconds);
+                return 25 + (22 * elapsedSeconds);
             } else if (elapsedSeconds <= 3) {
-                // 1-3s: Continue accelerating at 18% per second while descending
-                return 25 + (18 * elapsedSeconds);
-            } else if (elapsedSeconds <= 5.28) {
-                // 3-5.28s: Continue until we hit 100%
-                const speed = 25 + (18 * elapsedSeconds);
+                // 1-3s: Continue accelerating at 22% per second while descending
+                return 25 + (22 * elapsedSeconds);
+            } else if (elapsedSeconds <= 4.32) {
+                // 3-4.32s: Continue until we hit 100%
+                const speed = 25 + (22 * elapsedSeconds);
                 if (speed >= 100) {
                     // After hitting 100%, continue eternal acceleration
-                    return 100 + (18 * (elapsedSeconds - 4.17)); // 4.17s is when we hit 100%
+                    return 100 + (22 * (elapsedSeconds - 3.41)); // 3.41s is when we hit 100%
                 }
                 return speed;
             } else {
                 // Beyond 100% - ETERNAL ACCELERATION
-                return 100 + (18 * (elapsedSeconds - 4.17));
+                return 100 + (22 * (elapsedSeconds - 3.41));
             }
         }
         
@@ -556,11 +591,11 @@
                 // Get current speed based on journey time
                 currentSpeed = getSpeedAtTime(elapsedSeconds);
                 
-                // Handle the descent (1-3 seconds)
+                // Handle the descent (1-3 seconds - back to original timing)
                 if (elapsedSeconds >= 1 && elapsedSeconds <= 3) {
                     if (!wheelContainer.style.transition || wheelContainer.style.transition === 'none') {
                         // Start the slow descent and growth to dead center
-                        wheelContainer.style.transition = 'all 2s ease-in-out';
+                        wheelContainer.style.transition = 'all 2s ease-in-out'; // Back to original 2s
                         wheelContainer.style.top = '50%'; // Dead center
                         wheelContainer.style.transform = 'translate(-50%, -50%) scale(1.2)'; // Grow 20%
                     }
@@ -574,7 +609,7 @@
                 currentRotation -= (currentSpeed / 100) * 6;
                 
                 // Apply rotation with wobble
-                if (elapsedSeconds >= 1 && elapsedSeconds <= 3) {
+                if (elapsedSeconds >= 0.375 && elapsedSeconds <= 1.125) {
                     // During descent, maintain scale
                     wagonWheel.style.transform = `rotate(${currentRotation}deg) translateX(${wobble}px)`;
                 } else {
@@ -582,70 +617,42 @@
                     wagonWheel.style.transform = `rotate(${currentRotation}deg) translateX(${wobble}px)`;
                 }
                 
-              // Show wordmark after 8 seconds total
-                if (elapsedSeconds >= 8 && !wordmarkLarge.classList.contains('show')) {
-                wordmarkLarge.classList.add('show');
+                // Show wordmark after 3.5 seconds
+                if (elapsedSeconds >= 3.5 && !wordmarkLarge.classList.contains('show')) {
+                    wordmarkLarge.classList.add('show');
                 }
                 
-                // Start wordmark fading at 15 seconds
-                if (elapsedSeconds >= 15 && !wordmarkLarge.classList.contains('fade-out')) {
+                // Start wordmark fading at 7 seconds
+                if (elapsedSeconds >= 7 && !wordmarkLarge.classList.contains('fade-out')) {
                     wordmarkLarge.classList.add('fade-out');
                 }
 
-                // Start wheel fading at 20 seconds
-                if (elapsedSeconds >= 20 && !wheelFading) {
-                wheelFading = true;
-               wheelContainer.classList.add('fade-out');
+                // Show progress text at 9 seconds (while wheel is still spinning)
+                if (elapsedSeconds >= 9 && !progressText.classList.contains('show')) {
+                    progressText.classList.add('show');
+                }
+                
+                // Fade progress text at 12 seconds
+                if (elapsedSeconds >= 12 && !progressText.classList.contains('fade-out')) {
+                    progressText.classList.add('fade-out');
+                }
+                
+                // Fade wheel at 15 seconds
+                if (elapsedSeconds >= 15 && !wheelContainer.classList.contains('fade-out')) {
+                    wheelContainer.classList.add('fade-out');
+                }
+                
+                // STOP ALL ANIMATIONS at 18 seconds
+                if (elapsedSeconds >= 18 && animationId) {
+                    cancelAnimationFrame(animationId);
+                    animationId = null;
+                    return; // Exit the animation loop
                 }
                 
                 animationId = requestAnimationFrame(animate);
             }
             
             animate();
-        }
-        function startProgress() {
-            // Realistic progress jumps
-            const progressSteps = [
-                { percent: 0, delay: 0 },
-                { percent: 5, delay: 300 },
-                { percent: 6, delay: 200 },
-                { percent: 12, delay: 400 },
-                { percent: 23, delay: 600 },
-                { percent: 31, delay: 300 },
-                { percent: 47, delay: 800 },
-                { percent: 67, delay: 700 },
-                { percent: 84, delay: 900 },
-                { percent: 91, delay: 400 },
-                { percent: 97, delay: 600 },
-                { percent: 100, delay: 300 }
-            ];
-            
-            let currentStep = 0;
-            
-            function updateProgress() {
-                if (currentStep < progressSteps.length) {
-                    const step = progressSteps[currentStep];
-                    progressFill.style.width = step.percent + '%';
-                    progressPercentage.textContent = step.percent + '%';
-                    
-                    if (step.percent === 100) {
-                        // Hide progress bar and show completion message
-                        setTimeout(() => {
-                            progressContainer.style.opacity = '0';
-                            setTimeout(() => {
-                                sweepComplete.classList.add('show');
-                            }, 500);
-                        }, 500);
-                    }
-                    
-                    currentStep++;
-                    if (currentStep < progressSteps.length) {
-                        setTimeout(updateProgress, progressSteps[currentStep].delay);
-                    }
-                }
-            }
-            
-            updateProgress();
         }
     </script>
 </body>
