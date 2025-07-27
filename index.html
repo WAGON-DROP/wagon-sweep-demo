@@ -101,10 +101,10 @@
         /* Large wordmark that appears at the end */
         .wordmark-large {
             position: absolute;
-            top: 15%;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            width: 750px;
+            transform: translate(-50%, -50%);
+            width: 375px;
             max-width: 90vw;
             height: auto;
             opacity: 0;
@@ -151,7 +151,7 @@
         /* Progress text - same styling as question */
         .progress-text {
             position: absolute;
-            top: 15%;
+            top: 20%;
             left: 50%;
             transform: translateX(-50%) rotate(-2deg);
             font-family: 'Young Serif', serif;
@@ -617,29 +617,24 @@
                     wagonWheel.style.transform = `rotate(${currentRotation}deg) translateX(${wobble}px)`;
                 }
                 
-                // Show wordmark after 5 seconds
-                if (elapsedSeconds >= 5 && !wordmarkLarge.classList.contains('show')) {
-                    wordmarkLarge.classList.add('show');
-                }
-                
-                // Start wordmark fading at 9 seconds
-                if (elapsedSeconds >= 9 && !wordmarkLarge.classList.contains('fade-out')) {
-                    wordmarkLarge.classList.add('fade-out');
-                }
-
-                // Show progress text at 13 seconds (while wheel is still spinning)
-                if (elapsedSeconds >= 13 && !progressText.classList.contains('show')) {
+                // Show progress text at 5 seconds (replacing wordmark)
+                if (elapsedSeconds >= 5 && !progressText.classList.contains('show')) {
                     progressText.classList.add('show');
                 }
                 
-                // Fade progress text at 16 seconds
-                if (elapsedSeconds >= 16 && !progressText.classList.contains('fade-out')) {
+                // Fade progress text at 13 seconds (2 seconds earlier)
+                if (elapsedSeconds >= 13 && !progressText.classList.contains('fade-out')) {
                     progressText.classList.add('fade-out');
                 }
                 
                 // Fade wheel at 17 seconds
                 if (elapsedSeconds >= 17 && !wheelContainer.classList.contains('fade-out')) {
                     wheelContainer.classList.add('fade-out');
+                }
+                
+                // Show final wordmark at 18 seconds
+                if (elapsedSeconds >= 18 && !wordmarkLarge.classList.contains('show')) {
+                    wordmarkLarge.classList.add('show');
                 }
                 
                 // STOP ALL ANIMATIONS at 20 seconds
