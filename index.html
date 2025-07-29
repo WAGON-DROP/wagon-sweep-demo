@@ -178,6 +178,32 @@
             opacity: 0 !important;
             transition: opacity 2s ease-out !important;
         }
+
+        /* Final text - same styling as other text */
+        .final-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-2deg);
+            font-family: 'Young Serif', serif;
+            font-size: 56px;
+            font-weight: 700;
+            font-style: italic;
+            color: #000000;
+            opacity: 0;
+            white-space: nowrap;
+            text-shadow: 
+                3px 3px 0px #A0522D,
+                4px 4px 0px rgba(160, 82, 45, 0.5),
+                5px 5px 8px rgba(0, 0, 0, 0.3),
+                0 0 20px rgba(210, 105, 30, 0.2);
+            letter-spacing: 2px;
+            transition: opacity 5s ease-out;
+        }
+
+        .final-text.show {
+            opacity: 1;
+        }
         
         /* Button container */
         .button-container {
@@ -472,8 +498,8 @@
         <!-- Small Wordmark (bottom right) -->
         <img src="Wagon_TempWordmark_Charcoal.png" alt="WAGON" class="wordmark-small" id="wordmarkSmall">
         
-        <!-- Large Wordmark (appears at end) -->
-        <img src="Wagon_TempWordmark_Charcoal.png" alt="WAGON" class="wordmark-large" id="wordmarkLarge">
+        <!-- Final Text (appears at end) -->
+        <div class="final-text" id="finalText">Sweep in progress...</div>
         
         <!-- Question -->
         <div class="question" id="question">Conduct Integrity Sweep?</div>
@@ -510,7 +536,7 @@
         const question = document.getElementById('question');
         const buttonContainer = document.getElementById('buttonContainer');
         const wordmarkSmall = document.getElementById('wordmarkSmall');
-        const wordmarkLarge = document.getElementById('wordmarkLarge');
+        const finalText = document.getElementById('finalText');
         const progressText = document.getElementById('progressText');
         const dustParticles = document.querySelectorAll('.dust');
         
@@ -632,9 +658,9 @@
                     wheelContainer.classList.add('fade-out');
                 }
                 
-                // Show final wordmark at 20 seconds
-                if (elapsedSeconds >= 20 && !wordmarkLarge.classList.contains('show')) {
-                    wordmarkLarge.classList.add('show');
+                // Show final text at 20 seconds
+                if (elapsedSeconds >= 20 && !finalText.classList.contains('show')) {
+                    finalText.classList.add('show');
                 }
                 
                 // STOP ALL ANIMATIONS at 25 seconds
